@@ -1,3 +1,15 @@
+## PROYECTO BST-MAINTANCES
+
+Este proyecto está generado con Serverless Framework y programado con Nodejs para Amazon Web Service.
+
+Contiene:
+
+- Plantilla YML.
+- API Gateway.
+- Lambdas.
+- Custom authorization.
+
+
 ## SERVICIO PARA AUTENTICACIÓN
 
 Este es un servicio para autenticación de usuario.

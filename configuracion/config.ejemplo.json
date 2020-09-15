@@ -1,0 +1,6 @@
+{
+    "API_KEY": "CLAVE",
+    "SEED_TOKEN": "CLAVE",
+    "SEED_EXPIRE": 3600,
+    "TABLE_USUARIOS": "bst-maintance-usuarios"
+}
