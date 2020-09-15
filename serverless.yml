@@ -1,0 +1,117 @@
+service: sls-bst-maintance
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-include-dependencies
+
+custom:
+  tableName: "${file(./configuracion/config.${self:provider.stage}.json):TABLE_USUARIOS}-${self:provider.stage}"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  profile: desarrollo
+  stage: dev
+  region: us-west-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": ["UsersDynamoDBTable", "Arn"] }
+  environment:
+    TABLE_USUARIOS: ${self:custom.tableName}
+    SEED_TOKEN: ${file(./configuracion/config.${self:provider.stage}.json):SEED_TOKEN}
+    EXPIRE_TOKEN: ${file(./configuracion/config.${self:provider.stage}.json):SEED_EXPIRE}
+
+  apiKeys:
+    - ${file(./configuracion/config.${self:provider.stage}.json):API_KEY}
+
+functions:
+  getUsers:
+    handler: lambdas/usuarios/listUsers/handler.generico
+    events:
+      - http:
+          path: api/usuarios/listUsers
+          method: GET
+          private: true
+          cors:
+            origin:
+              - "*"
+            headers:
+              - token
+              - X-Api-Key
+
+  getUserById:
+    handler: lambdas/usuarios/listByRut/handler.generico
+    events:
+      - http:
+          path: api/usuarios/listByRut
+          method: GET
+          private: true
+          request:
+            parameters:
+              paths:
+                id: true
+          cors:
+            origin:
+              - "*"
+            headers:
+              - token
+              - X-Api-Key
+
+  createUser:
+    handler: lambdas/usuarios/createUser/handler.generico
+    events:
+      - http:
+          path: api/usuarios/createUser
+          method: POST
+          private: true
+          cors:
+            origin:
+              - "*"
+            headers:
+              - token
+              - X-Api-Key
+
+  loginUser:
+    handler: lambdas/auth/handler.generico
+    events:
+      - http:
+          path: api/auth
+          method: POST
+          private: true
+          cors:
+            origin:
+              - "*"
+
+resources:
+  Resources:
+    UsersDynamoDBTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: rut
+            AttributeType: S
+        KeySchema:
+          - AttributeName: rut
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.tableName}
+
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
