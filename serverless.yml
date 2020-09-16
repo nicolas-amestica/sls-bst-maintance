@@ -10,7 +10,7 @@ custom:
 provider:
   name: aws
   runtime: nodejs12.x
-  profile: desarrollo
+  profile: super-usuario
   stage: dev
   region: us-west-2
   iamRoleStatements:

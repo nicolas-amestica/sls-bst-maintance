@@ -36,6 +36,7 @@ app.post('/api/auth', (req, res) => {
 
     dynamoDB.get(params, (error, result) => {
 
+        // VERIFICA QUE LA PETICION GET CONTIENE ERRORES
         if (error) {
             console.log(error);
             return res.status(500).json({
@@ -45,6 +46,7 @@ app.post('/api/auth', (req, res) => {
             });
         }
 
+        // VERIFICA QUE HAYAN RESULTADOS
         if (!result.Item) {
             return res.status(404).json({
                 success: false,
@@ -52,6 +54,15 @@ app.post('/api/auth', (req, res) => {
             });
         }
 
+        // VERIFICA QUE EL USUARIO ESTÉ EN ESTADO 1
+        if (result.Item.estado != 1) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario bloqueado'
+            });
+        }
+
+        // VEIRIFCA CLAVE
         if (!bcrypt.compareSync(clave, result.Item.clave)) {
             return res.status(404).json({
                 success: false,
@@ -59,10 +70,12 @@ app.post('/api/auth', (req, res) => {
             });
         }
 
+        // GENERA TOKEN
         let token = JWT.sign({
             usuario: result.Item
         }, process.env.SEED_TOKEN, { expiresIn: parseInt(process.env.EXPIRE_TOKEN) });
 
+        // RETORNA RESPUESTA
         return res.json({
             success: true,
             message: "Usuario encontrado",
@@ -74,4 +87,5 @@ app.post('/api/auth', (req, res) => {
 
 });
 
+// EXPORTAR MÓDULO
 module.exports.generico = serverless(app);

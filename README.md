@@ -18,11 +18,13 @@ Objetivos:
 
 - Se conecta a DynamoDB
 - Genera token.
+- Verifica resultado.
 - Verifica Token.
+- Retornar respuesta.
 
 Parámetros de entrada:
 
-- email
+- rut
 - clave
 
 Parámetros de salida
@@ -40,7 +42,7 @@ Para probar este servicio, se debe ingresar manualmente un usuario de prueba en 
     "apaterno": "",
     "clave_2": "Blutengel1",
     "clave": "$2a$10$LIackwFY0/6HPVJrjsj84OQa6x0Bl5CrXpPhwwSJWKOZMtvxtF1tu",
-    "email": "niamesvi3@gmail.com",
+    "email": "ejemplo@dominio.com",
     "estado": 1,
     "foto": "",
     "telefono": ""
