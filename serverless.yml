@@ -33,6 +33,7 @@ provider:
     - ${file(./configuracion/config.${self:provider.stage}.json):API_KEY}
 
 functions:
+
   getUsers:
     handler: lambdas/usuarios/listUsers/handler.generico
     events:

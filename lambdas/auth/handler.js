@@ -70,6 +70,10 @@ app.post('/api/auth', (req, res) => {
             });
         }
 
+        // ELIMINAR CLAVE DE LA RESPUESTA
+        delete result.Item.clave;
+        delete result.Item.clave_2;
+
         // GENERA TOKEN
         let token = JWT.sign({
             usuario: result.Item
