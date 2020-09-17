@@ -90,9 +90,13 @@ functions:
           cors:
             origin:
               - "*"
+          headers:
+              - X-Api-Key
 
 resources:
+
   Resources:
+
     UsersDynamoDBTable:
       Type: "AWS::DynamoDB::Table"
       Properties:
