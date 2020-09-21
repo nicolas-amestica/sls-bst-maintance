@@ -35,6 +35,7 @@ Parámetros de salida
 
 Para probar este servicio, se debe ingresar manualmente un usuario de prueba en DynamoDB, el json es el siguiente:
 
+```
 {
     "ID": "",
     "NOMBRE": "",
@@ -48,12 +49,13 @@ Para probar este servicio, se debe ingresar manualmente un usuario de prueba en 
     "ESTADO": 1,
     "GENERO": "M"
 }
+```
 
 Para iniciar este servicio debe tener instalado lo siguiente:
 
-- serverless framework : Para realizar el despliegue en Amazon Web Service.
-- aws cli: Para conectar a los servicios de Amazon Web Service.
-- confgiruracion : Archivo de configuración que indicará los parámetros de configuración en Amazon Web Service.
+- Serverless framework : Para realizar el despliegue en Amazon Web Service.
+- AWS CLI: Para conectar a los servicios de Amazon Web Service.
+- Configuración : Archivo de configuración que indicará los parámetros de configuración en Amazon Web Service.
 
 No olvidar instalar los módulos
 
