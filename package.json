@@ -15,6 +15,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
+    "serverless-api-gateway-caching": "^1.5.0",
     "serverless-http": "^2.5.0",
     "serverless-plugin-include-dependencies": "^4.1.0"
   },

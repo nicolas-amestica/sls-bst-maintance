@@ -3,9 +3,12 @@ service: sls-bst-maintance
 plugins:
   - serverless-offline
   - serverless-plugin-include-dependencies
+  - serverless-api-gateway-caching
 
 custom:
   tableName: "${file(./configuracion/config.${self:provider.stage}.json):TABLE_USUARIOS}-${self:provider.stage}"
+  apiGatewayCaching: # DESABILITA EL CACHÉ DE FORMA GLOBAL AL CONSULTAR EL ENDPOINT (DE TODAS FORMAS ES NECESARIO INDICARLOS EN CADA ENDPOINT)
+    enabled: false
 
 provider:
   name: aws
@@ -34,12 +37,36 @@ provider:
 
 functions:
 
+  auth:
+    handler: lambdas/authorizer/handler.authorizer
+
   getUsers:
     handler: lambdas/usuarios/listUsers/handler.generico
     events:
       - http:
           path: api/usuarios/listUsers
           method: GET
+          private: true
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
+          cors:
+            origin:
+              - "*"
+            headers:
+              - token
+              - X-Api-Key
+
+  getUsers2:
+    handler: lambdas/usuarios/listUsers2/handler.generico
+    events:
+      - http:
+          path: api/usuarios/listUsers2
+          method: GET
+          authorizer:
+            name: auth
+            identitySource: method.request.header.token
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
           private: true
           cors:
             origin:
@@ -54,6 +81,31 @@ functions:
       - http:
           path: api/usuarios/listByRut
           method: GET
+          private: true
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
+          request:
+            parameters:
+              paths:
+                id: true
+          cors:
+            origin:
+              - "*"
+            headers:
+              - token
+              - X-Api-Key
+
+  getUserById2:
+    handler: lambdas/usuarios/listByRut2/handler.generico
+    events:
+      - http:
+          path: api/usuarios/listByRut2
+          method: GET
+          authorizer:
+            name: auth
+            identitySource: method.request.header.token
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
           private: true
           request:
             parameters:
@@ -72,6 +124,8 @@ functions:
       - http:
           path: api/usuarios/createUser
           method: POST
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
           private: true
           cors:
             origin:
@@ -86,12 +140,30 @@ functions:
       - http:
           path: api/auth
           method: POST
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
           private: true
           cors:
             origin:
               - "*"
           headers:
               - X-Api-Key
+  
+  loginUser2:
+    handler: lambdas/auth2/handler.generico
+    events:
+      - http:
+          path: api/auth2
+          method: POST
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
+          private: true
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Api-Key
+            allowCredentials: true
 
 resources:
 
@@ -101,10 +173,10 @@ resources:
       Type: "AWS::DynamoDB::Table"
       Properties:
         AttributeDefinitions:
-          - AttributeName: rut
+          - AttributeName: ID
             AttributeType: S
         KeySchema:
-          - AttributeName: rut
+          - AttributeName: ID
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

@@ -24,8 +24,8 @@ Objetivos:
 
 Parámetros de entrada:
 
-- rut
-- clave
+- ID (Es el rut)
+- CLAVE
 
 Parámetros de salida
 
@@ -36,16 +36,17 @@ Parámetros de salida
 Para probar este servicio, se debe ingresar manualmente un usuario de prueba en DynamoDB, el json es el siguiente:
 
 {
-    "rut": "",
-    "amaterno": "",
-    "nombre": "",
-    "apaterno": "",
-    "clave_2": "Blutengel1",
-    "clave": "$2a$10$LIackwFY0/6HPVJrjsj84OQa6x0Bl5CrXpPhwwSJWKOZMtvxtF1tu",
-    "email": "ejemplo@dominio.com",
-    "estado": 1,
-    "foto": "",
-    "telefono": ""
+    "ID": "",
+    "NOMBRE": "",
+    "AMATERNO": "",
+    "APATERNO": "",
+    "EMAIL": "ejemplo@dominio.com",
+    "TELEFONO": "",
+    "FOTO": "",
+    "CLAVE": "$2a$10$LIackwFY0/6HPVJrjsj84OQa6x0Bl5CrXpPhwwSJWKOZMtvxtF1tu",
+    "CLAVE_2": "Blutengel1",
+    "ESTADO": 1,
+    "GENERO": "M"
 }
 
 Para iniciar este servicio debe tener instalado lo siguiente:
