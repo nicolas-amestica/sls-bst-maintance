@@ -1,2 +1,4 @@
 /node_modules
-/configuracion
+/configuracion/config.dev.json
+/configuracion/config.qa.json
+/configuracion/config.prod.json
