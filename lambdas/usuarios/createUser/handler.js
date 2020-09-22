@@ -1,65 +1,59 @@
-'use strict';
-const serverless = require('serverless-http');
-const express = require('express');
-const app = express();
-const AWS = require('aws-sdk');
-const bodyParser = require('body-parser');
+'use-strinct'
+const { Dynamo } = require('../../../comun/Dynamo');
+const { Responses } = require('../../../comun/API_Responses');
 const bcrypt = require('bcryptjs');
-const { verificaToken } = require('../../../middlewares/autenticacion');
-const cors = require('cors');
-
-const corsOptions = {
-    origin: '*',
-    methods: 'PUT,OPTIONS',
-    credentials: true,
-};
-app.use(cors(corsOptions));
-app.options('*', cors());
-
-const dynamoDB = new AWS.DynamoDB.DocumentClient();
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json(true));
 
 // CREAR USUARIO
-app.post('/api/usuarios/createUser', verificaToken, (req, res) => {
+module.exports.generico = async (event) => {
 
-    const { rut, clave, nombre, apaterno, amaterno } = req.body;
+    try {
 
-    const params = {
-        TableName: process.env.TABLE_USUARIOS,
-        Item: {
-            rut: rut,
-            clave: bcrypt.hashSync(clave, 10),
-            nombre: nombre,
-            apaterno: apaterno,
-            amaterno: amaterno,
-            estado: 1
-        }
-        // ConditionExpression: 'attribute_not_exists(email)' // NO FUNCIONA
-    };
+        const { ID, CLAVE, NOMBRE, APATERNO, AMATERNO, GENERO, FOTO, EMAIL, TELEFONO } = JSON.parse(event.body);
 
-    dynamoDB.put(params, (error) => {
-
-        if (error) {
-            console.log(error, error.stack);
-            return res.status(400).json({
-                success: false,
-                message: "No se ha podido crear el usuario",
-                error
-            });
+        // VERIFICA QUE SE HAYAN RECIBIDO LOS PARAMETROS NECESARIOS PARA EL PROCESO
+        if (!ID || !CLAVE || !NOMBRE || !APATERNO || !AMATERNO || !GENERO) {
+            console.log(event.body);
+            return Responses._404({ message: 'Faltan parámetros de entrada.' });
         }
 
-        res.json({
-            success: true,
-            message: 'Usuario creado correctamente',
-            Item: {
-                rut,
-                clave
-            }
-        });
-    });
+        // VALIDAR QUE LA VARIABLE GÉNERO SEA NUMÉRICO Y QUE SEA 1 O 2
+        if (typeof GENERO != 'number' || (GENERO != 1 && GENERO != 2)) {
+            console.log(GENERO);
+            return Responses._400({ message: 'Género debe ser numérico y con valores 1 ó 2, correspondiente a masculino y femenino respectivamente.' });
+        }
 
-});
+        // CREAR JSON PARA SER ENVIADO A LA FUNCION DYNAMO WRITE
+        const usuario = {
+            "ID": ID.toUpperCase().trim(),
+            "CLAVE": bcrypt.hashSync(CLAVE, 10),
+            "CLAVE_2": CLAVE,
+            "NOMBRE": NOMBRE.toUpperCase().trim(),
+            "APATERNO": APATERNO.toUpperCase().trim(),
+            "AMATERNO": AMATERNO.toUpperCase().trim(),
+            ESTADO: 1,
+            FOTO,
+            "EMAIL": EMAIL.toUpperCase().trim(),
+            TELEFONO,
+            GENERO,
+        }
 
-module.exports.generico = serverless(app);
+        const data = await Dynamo.write(usuario, process.env.TABLE_USUARIOS);
+
+        // VERIFICA QUE HAYAN RESULTADOS
+        if (!data) {
+            return Responses._400({ message: `No se pudo escribir el usuario con ID ${ID}.` });
+        }
+
+        // QUITAR CLAVES PARA EL ENVÍO DE LA RESPUESTA
+        delete data.CLAVE;
+        delete data.CLAVE_2;
+
+        // RETORNA RESPUESTA
+        return Responses._200({ message: `Usuario con ID ${ID} ingresado correctamente.`, data });
+
+    } catch (error) {
+        console.log(error);
+        return Responses._500({ message: 'No se ha podido acceder al servicio.', error });
+    }
+
+};

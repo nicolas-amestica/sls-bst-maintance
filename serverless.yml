@@ -1,9 +1,9 @@
 service: sls-bst-maintance
 
 plugins:
-  - serverless-offline
-  - serverless-plugin-include-dependencies
-  - serverless-api-gateway-caching
+  - serverless-offline                      # HABILITA TRABAJO LOCAL
+  - serverless-plugin-include-dependencies  # EVITAR SUBIR DEPENDENCIAS INESESARIAS
+  - serverless-api-gateway-caching          # HABLITAR GESTION DE CACHÉ EN EL API-GATEWAY
 
 custom:
   tableName: "${file(./configuracion/config.${self:provider.stage}.json):TABLE_USUARIOS}-${self:provider.stage}"
@@ -37,30 +37,36 @@ provider:
 
 functions:
 
+  # AUTHORIZATION
   auth:
+    description: Autorizador de lambdas.
     handler: lambdas/authorizer/handler.authorizer
 
+  # LOGIN
+  login:
+    description: Autenticación de usuario.
+    handler: lambdas/login/handler.generico
+    events:
+      - http:
+          path: api/auth
+          method: POST
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
+          private: true
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Api-Key
+            allowCredentials: true
+  
+  # USUARIOS
   getUsers:
+    description: Listar usuarios.
     handler: lambdas/usuarios/listUsers/handler.generico
     events:
       - http:
           path: api/usuarios/listUsers
-          method: GET
-          private: true
-          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
-            enabled: false
-          cors:
-            origin:
-              - "*"
-            headers:
-              - token
-              - X-Api-Key
-
-  getUsers2:
-    handler: lambdas/usuarios/listUsers2/handler.generico
-    events:
-      - http:
-          path: api/usuarios/listUsers2
           method: GET
           authorizer:
             name: auth
@@ -76,30 +82,11 @@ functions:
               - X-Api-Key
 
   getUserById:
+    description: Listar usuario por ID (RUT).
     handler: lambdas/usuarios/listByRut/handler.generico
     events:
       - http:
           path: api/usuarios/listByRut
-          method: GET
-          private: true
-          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
-            enabled: false
-          request:
-            parameters:
-              paths:
-                id: true
-          cors:
-            origin:
-              - "*"
-            headers:
-              - token
-              - X-Api-Key
-
-  getUserById2:
-    handler: lambdas/usuarios/listByRut2/handler.generico
-    events:
-      - http:
-          path: api/usuarios/listByRut2
           method: GET
           authorizer:
             name: auth
@@ -119,11 +106,15 @@ functions:
               - X-Api-Key
 
   createUser:
+    description: Crear usuario.
     handler: lambdas/usuarios/createUser/handler.generico
     events:
       - http:
           path: api/usuarios/createUser
           method: POST
+          authorizer:
+            name: auth
+            identitySource: method.request.header.token
           caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
             enabled: false
           private: true
@@ -134,36 +125,102 @@ functions:
               - token
               - X-Api-Key
 
-  loginUser:
-    handler: lambdas/auth/handler.generico
+  # INSTANCIAS
+  getInstances:
+    description: Listar instancias.
+    handler: lambdas/Instancias/listInstances/handler.generico
+    role: arn:aws:iam::715010718328:role/roleDesarrolladoresFull
     events:
       - http:
-          path: api/auth
-          method: POST
+          path: api/instancias/listInstances
+          method: GET
+          authorizer:
+            name: auth
+            identitySource: method.request.header.token
           caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
             enabled: false
           private: true
           cors:
             origin:
               - "*"
-          headers:
+            headers:
+              - token
               - X-Api-Key
-  
-  loginUser2:
-    handler: lambdas/auth2/handler.generico
+
+  getInstanceById:
+    description: Listar instancia por arreglo de IDs.
+    handler: lambdas/Instancias/listInstanceById/handler.generico
+    role: arn:aws:iam::715010718328:role/roleDesarrolladoresFull
     events:
       - http:
-          path: api/auth2
+          path: api/instancias/listInstanceById
           method: POST
+          authorizer:
+            name: auth
+            identitySource: method.request.header.token
           caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
             enabled: false
           private: true
+          request:
+            parameters:
+              paths:
+                id: true
           cors:
-            origin: '*'
+            origin:
+              - "*"
             headers:
-              - Content-Type
+              - token
               - X-Api-Key
-            allowCredentials: true
+
+  powerOffInstance:
+    description: Apagar instancia por arreglo de IDs
+    handler: lambdas/Instancias/powerOff/handler.generico
+    role: arn:aws:iam::715010718328:role/roleDesarrolladoresFull
+    events:
+      - http:
+          path: api/instancias/powerOff
+          method: POST
+          authorizer:
+            name: auth
+            identitySource: method.request.header.token
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
+          private: true
+          request:
+            parameters:
+              paths:
+                id: true
+          cors:
+            origin:
+              - "*"
+            headers:
+              - token
+              - X-Api-Key
+              
+  powerOnInstance:
+    description: Encender instancia por arreglo de IDs
+    handler: lambdas/Instancias/powerOn/handler.generico
+    role: arn:aws:iam::715010718328:role/roleDesarrolladoresFull
+    events:
+      - http:
+          path: api/instancias/powerOn
+          method: POST
+          authorizer:
+            name: auth
+            identitySource: method.request.header.token
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
+          private: true
+          request:
+            parameters:
+              paths:
+                id: true
+          cors:
+            origin:
+              - "*"
+            headers:
+              - token
+              - X-Api-Key
 
 resources:
 

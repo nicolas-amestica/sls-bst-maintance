@@ -1,70 +1,36 @@
-'use strict';
-const serverless = require('serverless-http');
-const express = require('express');
-const app = express();
-const AWS = require('aws-sdk');
-const bodyParser = require('body-parser');
-const { verificaToken } = require('../../../middlewares/autenticacion');
-const cors = require('cors');
+'use-strinct'
+const { Dynamo } = require('../../../comun/Dynamo');
+const { Responses } = require('../../../comun/API_Responses');
 
-const corsOptions = {
-    origin: '*',
-    methods: 'GET,POST,OPTIONS',
-    credentials: true,
+// LISTAR USUARIO POR ID
+module.exports.generico = async (event) => {
+
+    const { ID } = event.queryStringParameters;
+
+    // VERIFICA QUE SE HAYA RECIBIDO EL PARAMETRO NECESARIO PARA EL PROCESO
+    if (!ID.toUpperCase().trim()) {
+        console.log(event.queryStringParameters);
+        return Responses._400({ message: 'Falta parámetro de entrada.' });
+    }
+
+    try {
+        const data = await Dynamo.get(ID.toUpperCase().trim(), process.env.TABLE_USUARIOS);
+
+        // VERIFICA QUE HAYA RESULTADO
+        if (!data.Item) {
+            return Responses._404({ message: `No existen registros para el id ${ID}.` });
+        }
+
+        // QUITAR PROPIEDADES DE LA RESPUESTA
+        delete data.Item.CLAVE;
+        delete data.Item.CLAVE_2;
+
+        // RETORNA RESPUESTA
+        return Responses._200({ message: 'Usuario encontrado.', Item: data.Item });
+        
+    } catch (error) {
+        console.log(error);
+        return Responses._500({ message: 'No se ha podido acceder al servicio.', error });        
+    }
+
 };
-app.use(cors(corsOptions));
-app.options('*', cors());
-
-const dynamoDB = new AWS.DynamoDB.DocumentClient();
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json(true));
-
-// LISTAR USUARIO POR RUT
-app.get('/api/usuarios/listByRut', verificaToken, (req, res) => {
-
-    if (!req.query.rut) {
-        return res.status(404).json({
-            success: false,
-            message: "Se espera un parámetro"
-        });
-    }
-
-    var params = {
-        TableName: process.env.TABLE_USUARIOS,
-        Key: {
-            "rut": req.query.rut
-        }
-    }
-
-    dynamoDB.get(params, (error, result) => {
-
-        if (error) {
-            console.log(error);
-            return res.status(400).json({
-                success: false,
-                message: "No se ha podido acceder a los usuarios",
-                error
-            });
-        }
-
-
-        if (!result.Item) {
-            return res.status(200).json({
-                success: false,
-                message: "No se encontró al usuario"
-            });
-        }
-
-        const { Item } = result;
-
-        res.status(200).json({
-            success: true,
-            Item
-        });
-
-    });
-
-});
-
-module.exports.generico = serverless(app);

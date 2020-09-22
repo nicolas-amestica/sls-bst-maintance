@@ -6,8 +6,10 @@ module.exports.generico = async (event) => {
 
     try {
 
+        // LISTAR INSTANCIAS
         const data = await Instancia.describeInstances();
 
+        // VALIDAR QUE EXISTAN INSTANCIAS
         if (data.Reservations.length < 1) {
             return Responses._404({ message: 'No existen instancias.' });
         }

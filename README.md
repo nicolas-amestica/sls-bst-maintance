@@ -31,6 +31,7 @@ Parámetros de salida
 
 - status
 - message
+- data
 - token
 
 Para probar este servicio, se debe ingresar manualmente un usuario de prueba en DynamoDB, el json es el siguiente:
@@ -47,7 +48,7 @@ Para probar este servicio, se debe ingresar manualmente un usuario de prueba en 
     "CLAVE": "$2a$10$LIackwFY0/6HPVJrjsj84OQa6x0Bl5CrXpPhwwSJWKOZMtvxtF1tu",
     "CLAVE_2": "Blutengel1",
     "ESTADO": 1,
-    "GENERO": "M"
+    "GENERO": 1 o 2 (masculino o femenino)
 }
 ```
 

@@ -11,18 +11,11 @@
   "dependencies": {
     "aws-sdk": "^2.730.0",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "serverless-api-gateway-caching": "^1.5.0",
-    "serverless-http": "^2.5.0",
     "serverless-plugin-include-dependencies": "^4.1.0"
   },
   "devDependencies": {
-    "serverless-offline": "^6.5.0",
-    "serverless-plugin-webpack": "^1.5.1",
-    "serverless-webpack": "^5.3.5",
-    "webpack": "^4.44.1"
+    "serverless-offline": "^6.5.0"
   }
 }
