@@ -125,6 +125,30 @@ functions:
               - token
               - X-Api-Key
 
+  updateStatusUser:
+    description: Cambiar estado de usuario por ID (RUT).
+    handler: lambdas/usuarios/updateStatusUser/handler.generico
+    events:
+      - http:
+          path: api/usuarios/updateStatusUser
+          method: POST
+          authorizer:
+            name: auth
+            identitySource: method.request.header.token
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
+          private: true
+          request:
+            parameters:
+              paths:
+                id: true
+          cors:
+            origin:
+              - "*"
+            headers:
+              - token
+              - X-Api-Key
+
   # INSTANCIAS
   getInstances:
     description: Listar instancias.

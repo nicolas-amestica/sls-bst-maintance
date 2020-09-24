@@ -38,19 +38,23 @@ const Dynamo = {
     },
 
     update: async ({ tableName, primaryKey, primaryKeyValue, updateKey, updateValue }) => {
+
         const params = {
             TableName: tableName,
             Key: { [primaryKey]: primaryKeyValue },
             UpdateExpression: `set ${updateKey} = :updateValue`,
+            ConditionExpression: 'attribute_exists(ID)',
             ExpressionAttributeValues: {
                 ':updateValue': updateValue,
             },
+            ReturnValues: "ALL_NEW"
         };
 
         return documentClient.update(params).promise();
     },
 
     query: async ({ tableName, index, queryKey, queryValue }) => {
+
         const params = {
             TableName: tableName,
             IndexName: index,
@@ -66,6 +70,8 @@ const Dynamo = {
     },
 
     scan: async ({ tableName, projectionExpression, filterExpression, expressionAttributes }) => {
+
+        console.log("CONCHETUMARE");
 
         const params = {
             TableName: tableName,

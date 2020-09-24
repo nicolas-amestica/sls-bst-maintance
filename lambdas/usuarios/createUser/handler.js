@@ -11,7 +11,7 @@ module.exports.generico = async (event) => {
         const { ID, CLAVE, NOMBRE, APATERNO, AMATERNO, GENERO, FOTO, EMAIL, TELEFONO } = JSON.parse(event.body);
 
         // VERIFICA QUE SE HAYAN RECIBIDO LOS PARAMETROS NECESARIOS PARA EL PROCESO
-        if (!ID || !CLAVE || !NOMBRE || !APATERNO || !AMATERNO || !GENERO) {
+        if (!ID.toUpperCase().trim() || !CLAVE || !NOMBRE || !APATERNO || !AMATERNO || !GENERO) {
             console.log(event.body);
             return Responses._404({ message: 'Faltan parámetros de entrada.' });
         }
