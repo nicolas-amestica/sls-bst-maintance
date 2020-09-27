@@ -19,6 +19,7 @@ const Dynamo = {
     },
 
     async write(data, TableName) {
+
         if (!data.ID) {
             throw Error('No hay ID en la data');
         }
@@ -70,8 +71,6 @@ const Dynamo = {
     },
 
     scan: async ({ tableName, projectionExpression, filterExpression, expressionAttributes }) => {
-
-        console.log("CONCHETUMARE");
 
         const params = {
             TableName: tableName,

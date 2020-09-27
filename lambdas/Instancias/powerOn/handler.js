@@ -9,15 +9,16 @@ module.exports.generico = async (event) => {
         const EC2 = JSON.parse(event.body);
 
         if (EC2.length == 0) {
-            return Responses._400({ message: 'Falta parámetro de entrada.' });
+            return Responses._400({ message: 'Falta parámetro de entrada.', error: 'Falta parámetro de entrada.' });
         }
 
         const data = await Instancia.encender(EC2);
 
         // RETORNA RESPUESTA
         return Responses._200({ message: `Encendiendo instancias.`, "data" : data });
-    } catch (error) {
-        return Responses._500({ message: 'No se ha podido acceder al servicio.', error });
+    } catch (err) {
+        console.log(err);
+        return Responses._500({ message: 'No se ha podido acceder al servicio.', error: 'No se ha podido acceder al servicio.', err });
     }
 
 };

@@ -122,6 +122,7 @@ functions:
             origin:
               - "*"
             headers:
+              - Content-Type
               - token
               - X-Api-Key
 
@@ -146,6 +147,7 @@ functions:
             origin:
               - "*"
             headers:
+              - Content-Type
               - token
               - X-Api-Key
 
@@ -193,6 +195,7 @@ functions:
             origin:
               - "*"
             headers:
+              - Content-Type
               - token
               - X-Api-Key
 
@@ -218,6 +221,7 @@ functions:
             origin:
               - "*"
             headers:
+              - Content-Type
               - token
               - X-Api-Key
               
@@ -243,6 +247,7 @@ functions:
             origin:
               - "*"
             headers:
+              - Content-Type
               - token
               - X-Api-Key
 

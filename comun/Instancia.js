@@ -27,10 +27,6 @@ const Instancia = {
     },
 
     async apagar(ID) {
-        
-        if (ID.length == 0) {
-            throw Error('No hay ID en la data');
-        }
 
         const params = {
             "InstanceIds": ID
