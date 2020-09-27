@@ -14,13 +14,14 @@ module.exports.generico = async (event) => {
         });
 
         if (data.length == 0) {
-            return Responses._404({ message: 'No existen usuarios a listar.', error: "No existen usuarios a listar." });
+            return Responses._404({ error: "No existen usuarios a listar." });
         }
 
         // RETORNA RESPUESTA
         return Responses._200({ message: `Instancias listadas correctamente.`, "data" : data.Items });
-    } catch (error) {
-        return Responses._500({ message: 'No se ha podido acceder al servicio.', error });
+    } catch (err) {
+        console.log(err);
+        return Responses._500({ error: 'No se ha podido acceder al servicio', err });
     }
 
 };

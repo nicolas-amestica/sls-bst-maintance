@@ -13,13 +13,13 @@ module.exports.generico = async (event) => {
         // VERIFICA QUE SE HAYAN RECIBIDO LOS PARAMETROS NECESARIOS PARA EL PROCESO
         if (!ID.toUpperCase().trim() || !CLAVE || !NOMBRE || !APATERNO || !AMATERNO || !GENERO) {
             console.log(event.body);
-            return Responses._404({ message: 'Faltan parámetros de entrada.' });
+            return Responses._404({ error: 'Faltan parámetros de entrada.' });
         }
 
         // VALIDAR QUE LA VARIABLE GÉNERO SEA NUMÉRICO Y QUE SEA 1 O 2
         if (typeof GENERO != 'number' || (GENERO != 1 && GENERO != 2)) {
-            console.log(GENERO);
-            return Responses._400({ message: 'Género debe ser numérico y con valores 1 ó 2, correspondiente a masculino y femenino respectivamente.' });
+            console.log({ error: GENERO });
+            return Responses._400({ error: 'Género debe ser numérico y con valores 1 ó 2, correspondiente a masculino y femenino respectivamente.' });
         }
 
         // CREAR JSON PARA SER ENVIADO A LA FUNCION DYNAMO WRITE
@@ -41,7 +41,7 @@ module.exports.generico = async (event) => {
 
         // VERIFICA QUE HAYAN RESULTADOS
         if (!data) {
-            return Responses._400({ message: `No se pudo escribir el usuario con ID ${ID}.` });
+            return Responses._400({ error: `No se pudo escribir el usuario con ID ${ID}.` });
         }
 
         // QUITAR CLAVES PARA EL ENVÍO DE LA RESPUESTA
@@ -51,9 +51,9 @@ module.exports.generico = async (event) => {
         // RETORNA RESPUESTA
         return Responses._200({ message: `Usuario con ID ${ID} ingresado correctamente.`, data });
 
-    } catch (error) {
-        console.log(error);
-        return Responses._500({ message: 'No se ha podido acceder al servicio.', error });
+    } catch (err) {
+        console.log(err);
+        return Responses._500({ error: 'No se ha podido acceder al servicio.', err });
     }
 
 };

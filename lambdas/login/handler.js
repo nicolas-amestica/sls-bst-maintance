@@ -55,9 +55,9 @@ module.exports.generico = async (event) => {
         // RETORNA RESPUESTA
         return Responses._200({ message: `${saludo} ${data.Item.NOMBRE}`, data: data.Item, token });
 
-    } catch (error) {
-      console.log(error);
-      return Responses._500({ message: 'No se ha podido acceder al servicio.', error });
+    } catch (err) {
+      console.log(err);
+      return Responses._500({ error: 'No se ha podido acceder al servicio.', err });
     }
 
 };

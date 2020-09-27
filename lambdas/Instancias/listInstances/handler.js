@@ -11,7 +11,7 @@ module.exports.generico = async (event) => {
 
         // VALIDAR QUE EXISTAN INSTANCIAS
         if (data.Reservations.length < 1) {
-            return Responses._404({ message: 'No existen instancias.', error: "No existen instancias." });
+            return Responses._404({ error: "No existen instancias." });
         }
 
         let instancias = [];
@@ -37,7 +37,7 @@ module.exports.generico = async (event) => {
         return Responses._200({ message: `Instancias listadas correctamente.`, "data" : instancias });
     } catch (err) {
         console.log(err);
-        return Responses._500({ message: 'No se ha podido acceder al servicio.', error: 'No se ha podido acceder al servicio.', err });
+        return Responses._500({ error: 'No se ha podido acceder al servicio', err });
     }
 
 };

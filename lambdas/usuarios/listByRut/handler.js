@@ -10,7 +10,7 @@ module.exports.generico = async (event) => {
     // VERIFICA QUE SE HAYA RECIBIDO EL PARAMETRO NECESARIO PARA EL PROCESO
     if (!ID.toUpperCase().trim()) {
         console.log(event.queryStringParameters);
-        return Responses._400({ message: 'Falta parámetro de entrada.' });
+        return Responses._400({ error: 'Falta parámetro de entrada.' });
     }
 
     try {
@@ -18,7 +18,7 @@ module.exports.generico = async (event) => {
 
         // VERIFICA QUE HAYA RESULTADO
         if (!data.Item) {
-            return Responses._404({ message: `No existen registros para el id ${ID}.` });
+            return Responses._404({ error: `No existen registros para el id ${ID}.` });
         }
 
         // QUITAR PROPIEDADES DE LA RESPUESTA
@@ -28,9 +28,9 @@ module.exports.generico = async (event) => {
         // RETORNA RESPUESTA
         return Responses._200({ message: 'Usuario encontrado.', Item: data.Item });
         
-    } catch (error) {
-        console.log(error);
-        return Responses._500({ message: 'No se ha podido acceder al servicio.', error });        
+    } catch (err) {
+        console.log(err);
+        return Responses._500({ error: 'No se ha podido acceder al servicio.', err });
     }
 
 };
