@@ -250,6 +250,31 @@ functions:
               - Content-Type
               - token
               - X-Api-Key
+  
+  describeStatus:
+    description: Describe el estado de la instancia por ID
+    handler: lambdas/Instancias/describeStatus/handler.generico
+    role: arn:aws:iam::715010718328:role/roleDesarrolladoresFull
+    events:
+      - http:
+          path: api/instancias/describeStatus
+          method: GET
+          authorizer:
+            name: auth
+            identitySource: method.request.header.token
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
+          private: true
+          request:
+            parameters:
+              paths:
+                id: true
+          cors:
+            origin:
+              - "*"
+            headers:
+              - token
+              - X-Api-Key
 
 resources:
 

@@ -56,6 +56,22 @@ const Instancia = {
         return data;
     },
 
+    async describeStatus(ID) {
+
+        const params = {
+            // IncludeAllInstances: true,
+            InstanceIds: [ID]
+        };
+
+        const data = await EC2.describeInstanceStatus(params).promise();
+
+        if (!data) {
+            throw Error(`Ocurrió un error al obtener el estado de la ${ID}`);
+        }
+
+        return data;
+    },
+
 };
 
 module.exports = {
