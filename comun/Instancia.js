@@ -72,6 +72,38 @@ const Instancia = {
         return data;
     },
 
+    async terminateInstance(ID) {
+
+        const params = {
+            // IncludeAllInstances: true,
+            InstanceIds: [ID]
+        };
+
+        const data = await EC2.terminateInstances(params).promise();
+
+        if (!data) {
+            throw Error(`Ocurrió un error al terminar la instancia ${ID}`);
+        }
+
+        return data;
+    },
+
+    async rebootInstance(ID) {
+
+        const params = {
+            // IncludeAllInstances: true,
+            InstanceIds: [ID]
+        };
+
+        const data = await EC2.rebootInstances(params).promise();
+
+        if (!data) {
+            throw Error(`Ocurrió un error al reiniciar la instancia ${ID}`);
+        }
+
+        return data;
+    },
+
 };
 
 module.exports = {

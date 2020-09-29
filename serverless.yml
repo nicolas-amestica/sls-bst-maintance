@@ -276,6 +276,58 @@ functions:
               - token
               - X-Api-Key
 
+  terminateInstance:
+    description: Encender instancia por arreglo de IDs
+    handler: lambdas/Instancias/terminateInstance/handler.generico
+    role: arn:aws:iam::715010718328:role/roleDesarrolladoresFull
+    events:
+      - http:
+          path: api/instancias/terminateInstance
+          method: POST
+          authorizer:
+            name: auth
+            identitySource: method.request.header.token
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
+          private: true
+          request:
+            parameters:
+              paths:
+                id: true
+          cors:
+            origin:
+              - "*"
+            headers:
+              - Content-Type
+              - token
+              - X-Api-Key
+    
+  rebootInstance:
+    description: Encender instancia por arreglo de IDs
+    handler: lambdas/Instancias/rebootInstance/handler.generico
+    role: arn:aws:iam::715010718328:role/roleDesarrolladoresFull
+    events:
+      - http:
+          path: api/instancias/rebootInstance
+          method: POST
+          authorizer:
+            name: auth
+            identitySource: method.request.header.token
+          caching: # DESHABILITAR TIEMPO DE SEGURIDAD CACHÉ
+            enabled: false
+          private: true
+          request:
+            parameters:
+              paths:
+                id: true
+          cors:
+            origin:
+              - "*"
+            headers:
+              - Content-Type
+              - token
+              - X-Api-Key
+
 resources:
 
   Resources:
